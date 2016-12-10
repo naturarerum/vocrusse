@@ -89,7 +89,8 @@ def selection_mot():
     valeur = langue_choisie.get()
     choix_question(valeur)
 
-def check_reponse():
+
+def check_reponse(event):
     resultat = reponse.get()
     mot_compare = langue_cible.get()
     print("res : ", resultat)
