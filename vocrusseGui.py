@@ -25,20 +25,24 @@ win.iconbitmap(r'C:\Python34\DLLs\pyc.ico')
 
 # Variables Globales
 ficIn = 'D:\\Temp\\russe_vocabulearn.txt'
+count = 0
 
 f = codecs.open(ficIn, encoding='utf-8')
 listVoc = []
 for line in f:
-    #print(line)
     splitted = line.rstrip().split(",")
     listVoc.append(splitted)
-    count = 0
+    count += 1
+    print(count)
 
 # Variables Globales
 langue_choisie = tk.StringVar()
+langue_cible = tk.StringVar()
 reponse = tk.StringVar()
 mot_demande = tk.StringVar()
+mot_compare = tk.StringVar()
 value = tk.StringVar()
+resultat = tk.StringVar()
 
 # Création du label liste déroulante choix de langue source
 lbl_choix_langue = ttk.Label(win, text="Langue            : ").grid(column=0, row=0)
@@ -52,10 +56,6 @@ lbl_mot_demande_affiche = ttk.Label(win, textvariable=mot_demande).grid(column=1
 # Création du label reponse
 lbl_reponse = ttk.Label(win, text="Réponse           : ").grid(column=0, row=2)
 
-"""def set_mot_demande():
-    myvar = langue_source.get()
-    print (myvar)
-    mot_demande = myvar"""
 
 def choix_question(langue):
     """choix aleatoire d un element source ou cible"""
@@ -63,14 +63,19 @@ def choix_question(langue):
     un_element = random.choice(listVoc)
     if value == 'Russe':
         langue_source = (un_element[0])
+        langue_cible = (un_element[1])
         myvar = langue_source
+        myvarcible = langue_cible
     else:
         langue_source = (un_element[1])
+        langue_cible = (un_element[0])
         myvar = langue_source
+        myvarcible = langue_cible
     mot_demande.set(myvar)
+    mot_compare.set(myvarcible)
     print(langue_source)
     print(un_element)
-    return langue_source
+    return langue_source, langue_cible
 
 
 
@@ -79,10 +84,22 @@ def selection_langue(event):
     langue_choisie = choix_langue.get()
     return langue_choisie
 
-# TODO A corriger la langue n est pas passee
+# Selection du mot a demander
 def selection_mot():
     valeur = langue_choisie.get()
     choix_question(valeur)
+
+def check_reponse():
+    resultat = reponse.get()
+    mot_compare = langue_cible.get()
+    print("res : ", resultat)
+    print(mot_compare)
+    if resultat == mot_compare:
+        statut = 1
+    else:
+        statut = 0
+    print(statut)
+    return statut
 
 
 # Création du widget liste déroulante choix de langue source
@@ -99,8 +116,10 @@ saisie_reponse.grid(column=1, row=2)
 
 
 # Création d'un widget bouton pour la selection aleatoire du mot
-selection = ttk.Button(win, text="Selection", command=selection_mot).grid(column=0, row=3)
+btn_selection = ttk.Button(win, text="Selection", command=selection_mot).grid(column=0, row=3)
 
+# Création d'un widget bouton pour la verification de la reponse
+btn_reponse = ttk.Button(win, text="Réponse", command=check_reponse).grid(column=2, row=3)
 
 # =================================================================================#                                                                             #
 #                                 START GUI                                        #
