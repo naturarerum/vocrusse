@@ -10,6 +10,9 @@
 
 import tkinter as tk
 from tkinter import ttk
+import random
+import codecs
+
 from tkinter import Menu
 from tkinter import messagebox as msBox
 
@@ -20,26 +23,106 @@ win = tk.Tk()
 win.title("Vocrusse")
 win.iconbitmap(r'C:\Python34\DLLs\pyc.ico')
 
-# Création d'un widget Label
-#  question = StringVar()
-# Label(fenetre, textvariable=question).pack(padx=30, pady=10)
+# Variables Globales
+ficIn = 'D:\\Temp\\russe_vocabulearn.txt'
+count = 0
 
-"""def validation(un_element):
-    if value.get() == un_element[1]:
-       showinfo("Bon")
-else:
-    showinfo("Mauvaise reponse")
-    value.set('')
+f = codecs.open(ficIn, encoding='utf-8')
+listVoc = []
+for line in f:
+    splitted = line.rstrip().split(",")
+    listVoc.append(splitted)
+    count += 1
+    print(count)
 
-# Création d'un widget Entry (champ de saisie)
+# Variables Globales
+langue_choisie = tk.StringVar()
+langue_cible = tk.StringVar()
+reponse = tk.StringVar()
+mot_demande = tk.StringVar()
+mot_compare = tk.StringVar()
+value = tk.StringVar()
+resultat = tk.StringVar()
 
-value = StringVar()
-value.set("Valeur")
-entree = Entry(fenetre, textvariable=value, width=30)
-entree.focus_set()
-entree.pack()"""
+# Création du label liste déroulante choix de langue source
+lbl_choix_langue = ttk.Label(win, text="Langue            : ").grid(column=0, row=0)
 
-# Création d'un widget bouton (champ Valider)
-# bouton = Button(fenetre, text="Valider", command=validation).pack(side=LEFT, padx=5, pady=5)
+# Création du label mot a trouver
+lbl_mot_demande = ttk.Label(win, text="Mot a trouver  : ").grid(column=0, row=1)
 
+# Création du label qui affiche le  mot a trouver
+lbl_mot_demande_affiche = ttk.Label(win, textvariable=mot_demande).grid(column=1, row=1)
+
+# Création du label reponse
+lbl_reponse = ttk.Label(win, text="Réponse           : ").grid(column=0, row=2)
+
+
+def choix_question(langue):
+    """choix aleatoire d un element source ou cible"""
+    value = langue
+    un_element = random.choice(listVoc)
+    if value == 'Russe':
+        langue_source = (un_element[0])
+        langue_cible = (un_element[1])
+        myvar = langue_source
+        myvarcible = langue_cible
+    else:
+        langue_source = (un_element[1])
+        langue_cible = (un_element[0])
+        myvar = langue_source
+        myvarcible = langue_cible
+    mot_demande.set(myvar)
+    mot_compare.set(myvarcible)
+    print(langue_source)
+    print(un_element)
+    return langue_source, langue_cible
+
+
+
+# Selection de la langue dans la liste déroulante
+def selection_langue(event):
+    langue_choisie = choix_langue.get()
+    return langue_choisie
+
+# Selection du mot a demander
+def selection_mot():
+    valeur = langue_choisie.get()
+    choix_question(valeur)
+
+
+def check_reponse(event):
+    resultat = reponse.get()
+    mot_compare = langue_cible.get()
+    print("res : ", resultat)
+    print(mot_compare)
+    if resultat == mot_compare:
+        statut = 1
+    else:
+        statut = 0
+    print(statut)
+    return statut
+
+
+# Création du widget liste déroulante choix de langue source
+choix_langue = ttk.Combobox(win, width=12, textvariable=langue_choisie)
+choix_langue['values'] = ('Français','Russe' )
+choix_langue.grid(column=1, row=0)
+choix_langue.current(0)
+choix_langue.focus()
+choix_langue.bind("<<ComboboxSelected>>", selection_langue)
+
+# Création du widget saisie de la réponse
+saisie_reponse = ttk.Entry(win, width=15, textvariable=reponse)
+saisie_reponse.grid(column=1, row=2)
+
+
+# Création d'un widget bouton pour la selection aleatoire du mot
+btn_selection = ttk.Button(win, text="Selection", command=selection_mot).grid(column=0, row=3)
+
+# Création d'un widget bouton pour la verification de la reponse
+btn_reponse = ttk.Button(win, text="Réponse", command=check_reponse).grid(column=2, row=3)
+
+# =================================================================================#                                                                             #
+#                                 START GUI                                        #
+#==================================================================================#
 win.mainloop()
