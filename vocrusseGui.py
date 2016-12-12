@@ -43,6 +43,7 @@ mot_demande = tk.StringVar()
 mot_compare = tk.StringVar()
 value = tk.StringVar()
 resultat = tk.StringVar()
+affichrep = tk.StringVar()
 
 # Création du label liste déroulante choix de langue source
 lbl_choix_langue = ttk.Label(win, text="Langue            : ").grid(column=0, row=0)
@@ -56,8 +57,11 @@ lbl_mot_demande_affiche = ttk.Label(win, textvariable=mot_demande).grid(column=1
 # Création du label reponse
 lbl_reponse = ttk.Label(win, text="Réponse           : ").grid(column=0, row=2)
 
+# Création du label qui indique si la reponse est bonne
+lbl_result = ttk.Label(win, textvariable=affichrep).grid(column=1, row=3)
 
 def choix_question(langue):
+
     """choix aleatoire d un element source ou cible"""
     value = langue
     un_element = random.choice(listVoc)
@@ -90,16 +94,19 @@ def selection_mot():
     choix_question(valeur)
 
 
-def check_reponse(event):
+def check_reponse():
     resultat = reponse.get()
-    mot_compare = langue_cible.get()
+    mymot2 = mot_compare.get()
     print("res : ", resultat)
-    print(mot_compare)
-    if resultat == mot_compare:
+    print(mymot2)
+    if resultat == mymot2:
         statut = 1
+        res="OK"
     else:
         statut = 0
+        res = "NOK"
     print(statut)
+    affichrep.set(res)
     return statut
 
 
@@ -125,4 +132,5 @@ btn_reponse = ttk.Button(win, text="Réponse", command=check_reponse).grid(colum
 # =================================================================================#                                                                             #
 #                                 START GUI                                        #
 #==================================================================================#
+
 win.mainloop()
