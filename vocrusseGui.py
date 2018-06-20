@@ -14,14 +14,16 @@ import random
 import codecs
 import sys
 from tkinter import filedialog
-from tkinter import Menu
 from tkinter import messagebox
+import logging
+
 
 
 # TODO : Mettre les methodes en premier
 # TODO : listVoc comme parametre 
 # TODO : appeler les methodes
 # TODO : redesign interface
+# TODO : implementer logs
 
 class AppGui(tk.Frame):
     def __init__(self):
@@ -36,32 +38,30 @@ class AppGui(tk.Frame):
         self.grid(sticky="NSEW")
         self.create_widgets()
 
+
     def create_widgets(self):
         # Class variables
         self.langue_choisie = tk.StringVar()
-        self.langue_choisie.get()
         self.reponse = tk.StringVar()
         self.mot_demande = tk.StringVar()
         self.mot_compare = tk.StringVar()
         self.value = tk.StringVar()
         self.resultat = tk.StringVar()
         self.affichrep = tk.StringVar()
-        self.valeurOneVar = tk.StringVar()
-        self.valeurOneVar.set("Ecrivez ici")
+        self.list_v = []
+
 
         mainFrame = ttk.Frame(self, borderwidth=2, relief="groove")
         mainFrame.grid(column=0, row=0, sticky="NSEW")
-        # Creates a Widget Button for the random selection of a word
-        btn_selection = ttk.Button(mainFrame, text="Selection", command=self.selection_mot).grid(column=2, row=0)
+        # Creates a Button for the random selection of a word
 
-        # Création d'un widget bouton pour le choix du fichier
-        btn_fichier = ttk.Button(mainFrame, text="Fichier", command=self.askopenfile).grid(column=2, row=4)
+        btn_selection = ttk.Button(mainFrame, text="Selection", command=self.choix_question).grid(column=2, row=0)
 
-        # Création d'un widget bouton pour soumettre la réponse
-        btn_fichier = ttk.Button(mainFrame, text="Réponse", command=self.check_reponse).grid(column=2, row=3)
+        # Création d'un bouton pour le choix du fichier
+        btn_fichier = ttk.Button(mainFrame, text="Fichier", command=self.read_file).grid(column=2, row=4)
 
-        # valeurOneLabel = tk.Label(mainFrame, text="ValeurOne").grid(column=0, row=0)
-        # valeurOneEntry = tk.Entry(mainFrame, textvariable=self.valeurOneVar)
+        # Création d'un  bouton pour soumettre la réponse
+        btn_reponse = ttk.Button(mainFrame, text="Réponse", command=self.check_reponse).grid(column=2, row=3)
 
         # Création du label liste déroulante choix de langue source
         lbl_choix_langue = ttk.Label(mainFrame, text="Langue            : ").grid(column=0, row=0)
@@ -90,12 +90,12 @@ class AppGui(tk.Frame):
         # Création du label qui indique si la reponse est bonne
         lbl_result = ttk.Label(mainFrame, textvariable=self.affichrep).grid(column=0, row=4)
 
-
-    def read_file(self, filename):
-        fichier = filename
+    def read_file(self):
+        print('----read file  Début-----')
+        filename = filedialog.askopenfilename()
         count = 0
         try:
-            f = codecs.open(fichier, encoding='utf-8')
+            f = codecs.open(filename, encoding='utf-8')
         except IOError as e:
             messagebox.showerror("Erreur", "I/O error({0}): {1}".format(e.errno, e.strerror))
         except:  # handle other exceptions such as attribute errors
@@ -106,24 +106,17 @@ class AppGui(tk.Frame):
             listVoc.append(splitted)
             count += 1
             print(count)
+        print(listVoc)
+        self.list_v = listVoc
         return listVoc
 
-
-    def askopenfile(self):
-        # get filename
-        filename = filedialog.askopenfilename()
-        # return filename
-        return filename
-
-    # Selection du mot a demander
-    def selection_mot(self):
-        valeur = self.langue_choisie.get()
-        self.choix_question(valeur)
-
-    # Selection de la langue dans la liste déroulante
+        # Selection de la langue dans la liste déroulante
     def selection_langue(self, event):
+        print('----Langue choisie Début-----')
         self.langue_choisie = self.choix_langue.get()
+        print('Langue choisie : ', self.langue_choisie)
         return self.langue_choisie
+
 
     def check_reponse(self):
         self.resultat = self.reponse.get()
@@ -141,10 +134,10 @@ class AppGui(tk.Frame):
         return statut
 
     #     """choix aleatoire d un element source ou cible"""
-    def choix_question(self, langue, listVoc):
-        self.value = langue
-        self.liste_vocab = listVoc
-        un_element = random.choice(self.liste_vocab)
+    def choix_question(self):
+        print('----Choix question debut-----')
+        self.value = self.langue_choisie
+        un_element = random.choice(self.list_v)
         if self.value == 'Russe':
             self.langue_source = (un_element[0])
             self.langue_cible = (un_element[1])
@@ -161,9 +154,6 @@ class AppGui(tk.Frame):
         print(un_element)
         return self.langue_source, self.langue_cible
 
-
-
-
 # =================================================================================#
 #                                 START GUI                                        #
 #==================================================================================#
@@ -171,7 +161,10 @@ class AppGui(tk.Frame):
 
 def main():
     app = AppGui()
+    logging.basicConfig(filename='vocrusse_log.log', level=logging.DEBUG)
+    logging.debug('Loggin Started')
     app.create_widgets()
+    logging.debug('Loggin Finished')
     app.mainloop()
 
 
