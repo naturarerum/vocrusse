@@ -26,7 +26,7 @@ class appGui(Tk):
         self.parent = parent
         self.title('titre')
         self.iconbitmap(r'C:\Users\GrandMage\PycharmProjects\vocrusse\ressources\Cactus.ico')
-        self.geometry('270x120')
+        self.geometry('270x146')
         self.menuBar = Menu(master=self)
         self.filemenu = Menu(self.menuBar, tearoff=0)
         self.statmenu = Menu(self.menuBar, tearoff=0)
@@ -48,13 +48,15 @@ class appGui(Tk):
         # Création du label liste déroulante choix de langue source
         lbl_choix_langue = tk.Label(main_frame, text="Matière            : ").grid(row=0)
 
-        # Adding items to the Menu
 
+        # Adding items to the Menu
         self.menuBar.add_cascade(label="File", menu=self.filemenu)
         self.filemenu.add_command(label="Open", command=self.read_file)
         self.filemenu.add_command(label="Quit", command=self.quit)
         self.menuBar.add_cascade(label="Stats", menu=self.statmenu)
 
+        # Status bar
+        # status = tk.Label(main_frame, text="Réponse : ").grid(column=0, row=4, sticky=W+E)
 
         # Creates a Button for the random selection of a word
         # btn_selection = tk.Button(main_frame, text="Selection", command=self.choix_question).grid(row = 1)
@@ -167,6 +169,21 @@ class appGui(Tk):
         return self.langue_source, self.langue_cible
 
 
+class StatusBar(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self.variable = tk.StringVar()
+        self.label = tk.Label(self, relief=tk.SUNKEN, anchor=tk.W,
+                              textvariable=self.variable,
+                              font=('arial', 16, 'normal'))
+        self.variable.set('Status Bar')
+        self.label.grid(column=0, row=4, columnspan=2, sticky=W + E)
+        self.grid()
+
+    def clear_status(self):
+        pass
+
 if __name__ == "__main__":
     app = appGui(None)
+    d = StatusBar(app)
     app.mainloop()
