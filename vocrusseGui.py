@@ -18,6 +18,7 @@ import codecs
 import sys
 from tkinter import filedialog
 from tkinter import messagebox
+import Stats
 
 
 class AppGui(Tk):
@@ -33,7 +34,6 @@ class AppGui(Tk):
         self.config(menu=self.menuBar)
         self.createWidgets()
         self.version = '1.1.0'
-
 
     def createWidgets(self):
         # Class variables
@@ -65,7 +65,10 @@ class AppGui(Tk):
         btn_selection = tk.Button(main_frame, text="Selection", command=self.choix_question).grid(column=2, row=0)
 
         # Création d'un  bouton pour soumettre la réponse
-        btn_reponse = tk.Button(main_frame, text="Vérifier", width=7, command=self.check_reponse).grid(column=2, row=3)
+        btn_reponse = tk.Button(main_frame, text="Vérifier", width=7, command=self.check_reponse).grid(column=2, row=2)
+
+        # Création d'un  bouton pour soumettre les champs a zero
+        btn_reset = tk.Button(main_frame, text="Reset", width=7, command=self.check_reponse).grid(column=2, row=3)
 
         # Création du label liste déroulante choix de langue source
         lbl_choix_langue = tk.Label(main_frame, text="Matière            : ").grid(column=0, row=0)
@@ -81,9 +84,11 @@ class AppGui(Tk):
         lbl_reponse = tk.Label(main_frame, text="Réponse           : ").grid(column=0, row=3)
 
         # Création du widget liste déroulante choix de langue source
+        self.choix_langue = tk.StringVar()
         self.choix_langue = ttk.Combobox(main_frame, width=12, textvariable=self.langue_choisie)
         self.choix_langue['values'] = ('Français', 'Russe', 'Addition', 'Multiplication')
         self.choix_langue.grid(column=1, row=0)
+        self.choix_langue.state(['readonly'])
         self.choix_langue.current(0)
         self.choix_langue.focus()
         self.choix_langue.bind("<<ComboboxSelected>>", self.selection_langue)
@@ -121,6 +126,7 @@ class AppGui(Tk):
         return listVoc
 
         # Selection de la langue dans la liste déroulante
+
     def selection_langue(self, event):
         print('----Langue choisie Début-----')
         self.langue_choisie = self.choix_langue.get()
@@ -177,9 +183,7 @@ class AppGui(Tk):
     def affiche_version(self):
         messagebox.showinfo("Version : ")
 
-    def compte_score(self):
-        pass
-
+    # def compte_score(self):
 
 if __name__ == "__main__":
     app = AppGui(None)
