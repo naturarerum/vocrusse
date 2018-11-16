@@ -181,7 +181,7 @@ class AppGui(Tk):
         return self.langue_source, self.langue_cible
 
     def affiche_version(self):
-        messagebox.showinfo("Version : ")
+        messagebox.showinfo("Version : ", self.version)
 
     # def compte_score(self):
 
